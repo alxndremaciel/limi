@@ -1,3 +1,15 @@
+def error_msg(metadata, messages):
+    line = metadata['line']
+    line_number = metadata['line_number']
+    program_name = metadata['program_name']
+    loc = f'{program_name}: {line_number}'
+    print(50*'-')
+    print(f'<<< ERRO - {loc} >>> {line}')
+    for message in messages:
+        print(f'<<< ERRO - {loc} >>> {message}')
+    print(50*'-')
+    raise SystemExit(0)
+
 def generate_program(program_name):
     program = []
     program = load_program(program_name, program)
@@ -11,7 +23,7 @@ def load_program(program_name, program):
                 program.append({
                     'line': cleaned_line,
                     'program_name': program_name,
-                    'line_number': ln 
+                    'line_number': ln + 1
                     })
 
     return program
@@ -38,21 +50,32 @@ def program_scanning(program):
                         error_msg(item, messages)
      
                 except ValueError:
-                    print('Erro: Impossível converter str em int.')
+                    messages = [
+                        'Erro na definição de registradores.',
+                        'Identificação  ou valores de registradores devem ser inteiros.']
+                    error_msg(item, messages)
             else:
-                print('Erro: Problema na definição de registradores.')
+                messages = [
+                        'Erro na definição de registradores.',
+                        'Número incorreto de tokes. Deveriam ser 3 tokens.']
+                error_msg(item, messages)
 
         if len(tokens[0]) == 1 and tokens[0] in '+-PCEF':
             cmd = None
             if len(tokens) == 1:
-                print('Erro: A definição de comando tem menos de 2 argumentos.')
+                messages = [
+                        'Erro na definição de comandos.',
+                        'Número incorreto de tokes. Tem menos de 2 tokens.']
+                error_msg(item, messages)
             elif len(tokens) == 2:
                 cmd = {'ope': tokens[0], 'arg': tokens[1], 'lab': None}
             elif len(tokens) == 3:
                 cmd = {'ope': tokens[0], 'arg': tokens[1], 'lab': tokens[2]}
             else:
-                print('Erro: A definição de comando tem mais de 3 argumentos.')
-
+                messages = [
+                        'Erro na definição de comandos.',
+                        'Número incorreto de tokes. Tem mais de 3 tokens.']
+                error_msg(item, messages)
 
             if cmd is not None:
                 commands.append(cmd)
