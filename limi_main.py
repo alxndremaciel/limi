@@ -5,10 +5,14 @@ def generate_program(program_name):
 
 def load_program(program_name, program):
     with open(program_name, 'r') as program_content:
-        for line in program_content.readlines():
+        for ln, line in enumerate(program_content.readlines()):
             cleaned_line = line.strip().strip('\n')
             if cleaned_line:
-                program.append(cleaned_line)
+                program.append({
+                    'line': cleaned_line,
+                    'program_name': program_name,
+                    'line_number': ln 
+                    })
 
     return program
 
@@ -17,7 +21,8 @@ def program_scanning(program):
     registers = [0, ]
     commands  = []
 
-    for line in program:
+    for item in program:
+        line = item['line']
         tokens = line.split(' ')
         if tokens[0] == 'R':
             if len(tokens) == 3:
@@ -27,8 +32,11 @@ def program_scanning(program):
                     if X == len(registers):
                         registers.append(V)
                     else:
-                        print('Erro: Ordem incorreta da definição dos registradores.')
-
+                        messages = [
+                            'Erro na definição de registradores.',
+                            'Ordem incorreta dos identificadores.']
+                        error_msg(item, messages)
+     
                 except ValueError:
                     print('Erro: Impossível converter str em int.')
             else:
@@ -41,7 +49,7 @@ def program_scanning(program):
             elif len(tokens) == 2:
                 cmd = {'ope': tokens[0], 'arg': tokens[1], 'lab': None}
             elif len(tokens) == 3:
-                cmd = {'ope': tokens[0], 'arg': tokens[1], 'lab': tokens[1]}
+                cmd = {'ope': tokens[0], 'arg': tokens[1], 'lab': tokens[2]}
             else:
                 print('Erro: A definição de comando tem mais de 3 argumentos.')
 
@@ -53,13 +61,11 @@ def program_scanning(program):
 
 def run_program(registers, commands):
     CP = 0
-
     while True:
         command = commands[CP]
         ope = command['ope']
         arg = command['arg']
         lab = command['lab']
-        print(command)
         if ope == 'F':
             break
         elif ope =='+':
@@ -89,5 +95,3 @@ program = generate_program(program_name)
 registers, commands = program_scanning(program)
 registers = run_program(registers, commands)
 print(registers)
-for each in commands:
-    print(each)
