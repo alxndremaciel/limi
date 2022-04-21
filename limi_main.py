@@ -52,6 +52,35 @@ def program_scanning(program):
     return registers, commands
 
 def run_program(registers, commands):
+    CP = 0
+
+    while True:
+        command = commands[CP]
+        ope = command['ope']
+        arg = command['arg']
+        lab = command['lab']
+        print(command)
+        if ope == 'F':
+            break
+        elif ope =='+':
+            registers[int(arg)] += 1
+            CP += 1
+        elif ope =='-':
+            registers[int(arg)] -= 1
+            CP += 1
+        elif ope =='P':
+            for line, cmd in enumerate(commands):
+                if cmd['lab'] == arg:
+                    CP = line
+                    break
+        elif ope == 'C':
+            if registers[int(arg)] > 0:
+                CP += 1
+            else:
+                CP += 2
+        elif ope == 'E':
+            print(f'Registrador {arg}: {registers[int(arg)]}')
+            CP += 1
 
     return registers
 
