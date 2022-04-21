@@ -34,6 +34,21 @@ def program_scanning(program):
             else:
                 print('Erro: Problema na definição de registradores.')
 
+        if len(tokens[0]) == 1 and tokens[0] in '+-PCEF':
+            cmd = None
+            if len(tokens) == 1:
+                print('Erro: A definição de comando tem menos de 2 argumentos.')
+            elif len(tokens) == 2:
+                cmd = {'ope': tokens[0], 'arg': tokens[1], 'lab': None}
+            elif len(tokens) == 3:
+                cmd = {'ope': tokens[0], 'arg': tokens[1], 'lab': tokens[1]}
+            else:
+                print('Erro: A definição de comando tem mais de 3 argumentos.')
+
+
+            if cmd is not None:
+                commands.append(cmd)
+
     return registers, commands
 
 def run_program(registers, commands):
@@ -45,3 +60,5 @@ program = generate_program(program_name)
 registers, commands = program_scanning(program)
 registers = run_program(registers, commands)
 print(registers)
+for each in commands:
+    print(each)
