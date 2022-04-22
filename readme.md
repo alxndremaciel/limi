@@ -63,7 +63,7 @@ As duas linhas acima serão transformadas durante o pré-processamento na lista 
 `registers = [0, 15, 37]`
 
 ## Estrutura de um programa
-Um programa interpretado nessa linguagem tem extensão *.lmp* e deve ser dividido em duas partes: declaração dos registradores e lista de comandos.
+Um programa interpretado em Limi tem extensão *.lmp* e deve ser dividido em duas partes: declaração dos registradores e lista de comandos.
 
 A declaração dos registradores serve para que o estágio de pré-processamento do programa identifique todos os registradores usados no programa.
 
@@ -72,3 +72,17 @@ A lista de comandos é o programa em si. É uma lista de operações válidas. C
 Linhas em branco serão ignoradas durante a análise sintática e removidas da lista de comandos.
 
 Qualquer linha que não tenha 2 ou 3 tokens e que o primeiro token não seja reconhecido  (`R`, `+`, `-`, `P`, `C`, `F` ou `E`) será considerada como comentário, ignoradas durante a análise sintática e removidas da lista de comandos.
+
+## Usando módulos
+Para evitar a repetição de código na escrita de um programa podemos usar a ideia de módulos. Um módulo interpretado em Limi tem extensão *.lmm* e obedece a mesma estrutura de um programa. Um módulo é diretamente copiado e inserido no meio do código do programa que o chamou durante o carregamento.
+
+Dois pontos importantes na definição de registradores:
+- A identificação de registradores se torna relativa ao tamanho da lista de registradores no momento do carregamento do módulo.
+
+- Um módulo com *N* argumentos deve ter no mínimo *N* definições de registradores.
+
+- Os *N* primeiros registradores não devem ser inicializados com valores e sim com um token sem função `_`. Dessa forma esses registradores serão apenas referenciados aos registradores passados como argumentos do módulo.
+
+- Se forem definidos mais de *N* registradores, esses registradores extras devem ser inicializados com valores válidos e serão adicionados à lista de registradores. 
+
+Perceba que um módulo pode chamar outro módulo e portanto é possível o uso de recursão. Entretanto muito cuidado deve ser tomado para evitar chamadas circulares e portanto não gerar uma situação de recursão infinita. Para previnir isso uma constante `RECURSION_LIMIT = 1000` é usada e cada chamada de módulo conta como uma iteração de recursão para garantir que nenhum programa realize uma quantidade exagerada de chamadas de módulos.
