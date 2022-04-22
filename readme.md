@@ -76,7 +76,7 @@ Qualquer linha que não tenha 2 ou 3 tokens e que o primeiro token não seja rec
 ## Usando módulos
 Para evitar a repetição de código na escrita de um programa podemos usar a ideia de módulos. Um módulo interpretado em Limi tem extensão *.lmm* e obedece a mesma estrutura de um programa. Um módulo é diretamente copiado e inserido no meio do código do programa que o chamou durante o carregamento.
 
-Dois pontos importantes na definição de registradores:
+Pontos importantes na definição de registradores:
 - A identificação de registradores se torna relativa ao tamanho da lista de registradores no momento do carregamento do módulo.
 
 - Um módulo com *N* argumentos deve ter no mínimo *N* definições de registradores.
@@ -86,3 +86,7 @@ Dois pontos importantes na definição de registradores:
 - Se forem definidos mais de *N* registradores, esses registradores extras devem ser inicializados com valores válidos e serão adicionados à lista de registradores. 
 
 Perceba que um módulo pode chamar outro módulo e portanto é possível o uso de recursão. Entretanto muito cuidado deve ser tomado para evitar chamadas circulares e portanto não gerar uma situação de recursão infinita. Para previnir isso uma constante `RECURSION_LIMIT = 1000` é usada e cada chamada de módulo conta como uma iteração de recursão para garantir que nenhum programa realize uma quantidade exagerada de chamadas de módulos.
+
+Os módulos são guardados no diretório `/lib` e são chamados usando a seguinte sintaxe:
+`.module_name(arg1, arg2,...,argN)`
+O ponto `.` indica que a linha de comando é uma chamada de módulo. `module_name` é o nome do módulo e `arg1, arg2,...,argN` é uma sequência de argumentos. Cada argumento é um identificador de registro já definido no programa/módulo que chama o `module_name`.
