@@ -1,6 +1,7 @@
 R 1 _
 R 2 _
 
+. testando_traceback(1)
 P B
 - 2 A
 + 1

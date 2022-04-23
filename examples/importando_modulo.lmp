@@ -5,15 +5,8 @@ R 4 78
 R 5 1
 R 6 2
 
-. somar_restrito(0,2)
+. somar_restrito(1,2)
 . somar_restrito(3,4)
 . somar_restrito(5,6)
 
-E 0
-E 1
-E 2
-E 3
-E 4
-E 5
-E 6
 F _
