@@ -1,8 +1,40 @@
 class Line:
-    __init__(self, program_name, line_number, line):
-        self.program_name = program_name 
-        self.line_number = line_number 
-        self.line = line 
+    def __init__(self, program_name, line_number, line):
+        self.program_name = program_name
+        self.line_number = line_number
+        self.line = line
+
+class Command:
+    def __init__(self, item):
+        line = item.line
+        tokens = line.split(' ')
+        if len(tokens) == 1:
+            messages = [
+                    'Erro na definição de comandos.',
+                    'Número incorreto de tokes. Tem menos de 2 tokens.']
+            error_msg(item, messages)
+        elif len(tokens) > 3:
+            messages = [
+                    'Erro na definição de comandos.',
+                    'Número incorreto de tokes. Tem mais de 3 tokens.']
+            error_msg(item, messages)
+
+        self.operation = tokens[0]
+        if self.operation in '+-CE':
+            try:
+                self.argument = int(tokens[1])
+            except ValueError:
+                messages = [
+                    'Erro na definição de comandos.',
+                    f'Argumento da operação \'{self.operation}\' deve ser inteiro.']
+                error_msg(item, messages)     
+        else:
+            self.argument = tokens[1]           
+
+        if len(tokens) == 3:
+            self.label = tokens[2]
+        else:
+            self.label = None
 
 def register_value(item, registers):
     line = item.line
@@ -40,10 +72,10 @@ def register_value(item, registers):
 def run_debug_mode(registers, commands, CP):
     print(f'Depurando::: Registradores: {registers} --- Comando: {commands[CP]}')
 
-def error_msg(metadata, messages):
-    line = metadata['line']
-    line_number = metadata['line_number']
-    program_name = metadata['program_name']
+def error_msg(item, messages):
+    line = item.line
+    line_number = item.line_number
+    program_name = item.program_name
     loc = f'{program_name}: {line_number}'
     print(50*'-')
     print(f'<<< ERRO - {loc} >>> {line}')
@@ -78,24 +110,8 @@ def program_scanning(program):
             registers.append(register_value(item, registers))
 
         if len(tokens[0]) == 1 and tokens[0] in '+-PCEF':
-            cmd = None
-            if len(tokens) == 1:
-                messages = [
-                        'Erro na definição de comandos.',
-                        'Número incorreto de tokes. Tem menos de 2 tokens.']
-                error_msg(item, messages)
-            elif len(tokens) == 2:
-                cmd = {'ope': tokens[0], 'arg': tokens[1], 'lab': None}
-            elif len(tokens) == 3:
-                cmd = {'ope': tokens[0], 'arg': tokens[1], 'lab': tokens[2]}
-            else:
-                messages = [
-                        'Erro na definição de comandos.',
-                        'Número incorreto de tokes. Tem mais de 3 tokens.']
-                error_msg(item, messages)
+            commands.append(Command(item))
 
-            if cmd is not None:
-                commands.append(cmd)
 
     return registers, commands
 
