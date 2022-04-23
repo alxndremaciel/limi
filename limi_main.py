@@ -116,6 +116,19 @@ def analise_module_calling(item, registers):
 def run_debug_mode(registers, commands, CP):
     print(f'Depurando::: Registradores: {registers} --- Comando: {commands[CP]}')
 
+def verify_program_integrity(commands, registers, item):
+    if len(registers) == 1:
+        messages = [
+            'Erro de integridade do programa.',
+            f'Não foram definidos registradores']
+        error_msg(item, messages)        
+    if commands[-1].operation != 'F':
+        messages = [
+            'Erro de integridade do programa.',
+            f'O programa não termina com operação F.']
+        error_msg(item, messages)   
+
+
 def error_msg(item, messages):
     line = item.line
     line_number = item.line_number
@@ -176,6 +189,8 @@ def program_scanning(program, args_val):
 
         if len(tokens[0]) == 1 and tokens[0] in '+-PCEF':
             commands.append(Command(item))
+
+    verify_program_integrity(commands, registers, item)
 
     return registers, commands
 
