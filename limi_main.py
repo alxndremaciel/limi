@@ -1,3 +1,6 @@
+def run_debug_mode(registers, commands, CP):
+    print(f'Depurando::: Registradores: {registers} --- Comandos: {commands[CP]}]')
+
 def error_msg(metadata, messages):
     line = metadata['line']
     line_number = metadata['line_number']
@@ -85,6 +88,9 @@ def program_scanning(program):
 def run_program(registers, commands):
     CP = 0
     while True:
+        if debugging_mode:
+            run_debug_mode(registers, commands, CP)
+
         command = commands[CP]
         ope = command['ope']
         arg = command['arg']
@@ -113,8 +119,8 @@ def run_program(registers, commands):
 
     return registers
 
+debugging_mode = True
 program_name = 'examples/somar.lmp'
 program = generate_program(program_name)
 registers, commands = program_scanning(program)
 registers = run_program(registers, commands)
-print(registers)
