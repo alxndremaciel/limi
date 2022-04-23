@@ -36,6 +36,12 @@ class Command:
         else:
             self.label = None
 
+    def __str__(self):
+        if self.label is None:
+            return f'{self.operation} {self.argument}'
+        else:
+            return f'{self.operation} {self.argument} {self.label}'
+
 def register_value(item, registers):
     line = item.line
     tokens = line.split(' ')
@@ -122,34 +128,34 @@ def run_program(registers, commands):
             run_debug_mode(registers, commands, CP)
 
         command = commands[CP]
-        ope = command['ope']
-        arg = command['arg']
-        lab = command['lab']
+        ope = command.operation
+        arg = command.argument
+        lab = command.label
         if ope == 'F':
             break
         elif ope =='+':
-            registers[int(arg)] += 1
+            registers[arg] += 1
             CP += 1
         elif ope =='-':
-            registers[int(arg)] -= 1
+            registers[arg] -= 1
             CP += 1
         elif ope =='P':
             for line, cmd in enumerate(commands):
-                if cmd['lab'] == arg:
+                if cmd.label == arg:
                     CP = line
                     break
         elif ope == 'C':
-            if registers[int(arg)] > 0:
+            if registers[arg] > 0:
                 CP += 1
             else:
                 CP += 2
         elif ope == 'E':
-            print(f'Registrador {arg}: {registers[int(arg)]}')
+            print(f'Registrador {arg}: {registers[arg]}')
             CP += 1
 
     return registers
 
-debugging_mode = False
+debugging_mode = True
 program_name = 'examples/somar.lmp'
 program = generate_program(program_name)
 registers, commands = program_scanning(program)
