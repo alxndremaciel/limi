@@ -18,7 +18,7 @@ class Command:
                     'Erro na definição de comandos.',
                     'Número incorreto de tokes. Tem mais de 3 tokens.']
             error_msg(item, messages)
-
+        
         self.operation = tokens[0]
         if self.operation in '+-CE':
             try:
@@ -27,9 +27,9 @@ class Command:
                 messages = [
                     'Erro na definição de comandos.',
                     f'Argumento da operação \'{self.operation}\' deve ser inteiro.']
-                error_msg(item, messages)     
+                error_msg(item, messages)
         else:
-            self.argument = tokens[1]           
+            self.argument = tokens[1]
 
         if len(tokens) == 3:
             self.label = tokens[2]
@@ -101,7 +101,6 @@ def load_program(program_name, program):
             cleaned_line = line.strip().strip('\n')
             if cleaned_line:
                 program.append(Line(program_name, ln + 1, cleaned_line))
-
     return program
 
 def program_scanning(program):
@@ -112,12 +111,12 @@ def program_scanning(program):
     for item in program:
         line = item.line
         tokens = line.split(' ')
+
         if tokens[0] == 'R':
             registers.append(register_value(item, registers))
 
         if len(tokens[0]) == 1 and tokens[0] in '+-PCEF':
             commands.append(Command(item))
-
 
     return registers, commands
 
@@ -131,6 +130,7 @@ def run_program(registers, commands):
         ope = command.operation
         arg = command.argument
         lab = command.label
+
         if ope == 'F':
             break
         elif ope =='+':
@@ -155,7 +155,7 @@ def run_program(registers, commands):
 
     return registers
 
-debugging_mode = True
+debugging_mode = False
 program_name = 'examples/somar.lmp'
 program = generate_program(program_name)
 registers, commands = program_scanning(program)
