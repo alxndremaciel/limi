@@ -1,3 +1,42 @@
+class Line:
+    __init__(self, program_name, line_number, line):
+        self.program_name = program_name 
+        self.line_number = line_number 
+        self.line = line 
+
+def register_value(item, registers):
+    line = item.line
+    tokens = line.split(' ')
+    if len(tokens) != 3:
+        messages = [
+                'Erro na definição de registradores.',
+                'Número incorreto de tokes. Deveriam ser 3 tokens.']
+        error_msg(item, messages)
+
+    try:
+        reg_id= int(tokens[1])
+    except ValueError:
+        messages = [
+            'Erro na definição de registradores.',
+            'Identificação de um registrador deve ser inteiro.']
+        error_msg(item, messages)
+
+    try:
+        reg_val = int(tokens[2])
+    except ValueError:
+        messages = [
+            'Erro na definição de registradores.',
+            'Valor inicializado em um registrador deve ser inteiro.']
+        error_msg(item, messages)
+
+    if reg_id!= len(registers):
+        messages = [
+            'Erro na definição de registradores.',
+            'Ordem incorreta dos identificadores.']
+        error_msg(item, messages)
+
+    return reg_val
+
 def run_debug_mode(registers, commands, CP):
     print(f'Depurando::: Registradores: {registers} --- Comando: {commands[CP]}')
 
@@ -23,11 +62,7 @@ def load_program(program_name, program):
         for ln, line in enumerate(program_content.readlines()):
             cleaned_line = line.strip().strip('\n')
             if cleaned_line:
-                program.append({
-                    'line': cleaned_line,
-                    'program_name': program_name,
-                    'line_number': ln + 1
-                    })
+                program.append(Line(program_name, ln + 1, cleaned_line))
 
     return program
 
@@ -37,31 +72,10 @@ def program_scanning(program):
     commands  = []
 
     for item in program:
-        line = item['line']
+        line = item.line
         tokens = line.split(' ')
         if tokens[0] == 'R':
-            if len(tokens) == 3:
-                try:
-                    X = int(tokens[1])
-                    V = int(tokens[2])
-                    if X == len(registers):
-                        registers.append(V)
-                    else:
-                        messages = [
-                            'Erro na definição de registradores.',
-                            'Ordem incorreta dos identificadores.']
-                        error_msg(item, messages)
-     
-                except ValueError:
-                    messages = [
-                        'Erro na definição de registradores.',
-                        'Identificação  ou valores de registradores devem ser inteiros.']
-                    error_msg(item, messages)
-            else:
-                messages = [
-                        'Erro na definição de registradores.',
-                        'Número incorreto de tokes. Deveriam ser 3 tokens.']
-                error_msg(item, messages)
+            registers.append(register_value(item, registers))
 
         if len(tokens[0]) == 1 and tokens[0] in '+-PCEF':
             cmd = None
