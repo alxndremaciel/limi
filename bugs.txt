@@ -1,0 +1,5 @@
+Na definição de comandos na classe Command.
+    Local. self.operation = tokens[0]
+    Problema. Qualquer substring de '+-CE' é aceita e pode causar loop infinito ou outros erros.
+    Solução.  Deve-se verificar se self.operation é apenas 1 caractere.
+------------------------------------------------------------------------------------------

@@ -1,6 +1,11 @@
 import os
 
 class Line:
+    '''
+    Classe Line usada para criar objetos que representam uma linha de
+    programa com o contéudo da linha e a identificação de arquivo e
+    número de linha para posterior referência.
+    '''
     def __init__(self, program_name, line_number, line):
         self.program_name = program_name
         self.line_number = line_number
@@ -10,9 +15,16 @@ class Line:
         return f'{self.program_name}: {self.line_number} --> {self.line}'
 
 class Command:
+    '''
+    A classe Command é usada para criar objetos que representam comandos
+    válidos.
+    '''
     def __init__(self, item):
+        # Tokens são criados separando uma linha de comando em tokens
         line = item.line
         tokens = line.split(' ')
+        
+        # Todo comando deve ter 2 ou 3 tokens.
         if len(tokens) == 1:
             messages = [
                     'Erro na definição de comandos.',
@@ -24,7 +36,14 @@ class Command:
                     'Número incorreto de tokes. Tem mais de 3 tokens.']
             error_msg(item, messages)
         
+        # O primeiro token é sempre uma operação
         self.operation = tokens[0]
+
+        '''
+        Se o token de operação for '+', '-', 'C' ou 'E', seu argumento
+        deve ser inteiro.
+        Caso contrário o argumento será string.
+        '''
         if self.operation in '+-CE':
             try:
                 self.argument = int(tokens[1])
@@ -36,28 +55,55 @@ class Command:
         else:
             self.argument = tokens[1]
 
+        '''
+        Para comandos com 3 tokens o ultimo token é um rótulo.
+        Para comandso com 2 tokens usamos None para o rótulo.
+        '''
         if len(tokens) == 3:
             self.label = tokens[2]
         else:
             self.label = None
 
+        '''
+        item é adicionado como trace para uso na visualização de erros
+        e traceback
+        '''
         self.trace = item
 
     def __str__(self):
+        '''
+        Overloading da representação em string de um objeto tipo Command.
+        '''
         if self.label is None:
             return f'{self.operation} {self.argument}'
         else:
             return f'{self.operation} {self.argument} {self.label}'
 
 def register_value(item, registers):
+    '''
+    Função para verificar se uma definição de registro foi feita de
+    forma correta.
+    Retorna o valor a ser inicializado no registrador
+    durante a análise.
+    '''
+
+    # Tokens são criados separando uma linha de comando em tokens.
     line = item.line
     tokens = line.split(' ')
+
+    '''
+    Uma definição de registradores devem ter exatamente 3 tokens.
+    O formato deve ser R X V onde R é para indicar que a linha de
+    comando é uma definição de registrador, X é o identificador de
+    registro e V é o valor a ser inicializado.
+    '''
     if len(tokens) != 3:
         messages = [
                 'Erro na definição de registradores.',
                 'Número incorreto de tokes. Deveriam ser 3 tokens.']
         error_msg(item, messages)
 
+    # Um identificador de registrador deve ser um inteiro
     try:
         reg_id= int(tokens[1])
     except ValueError:
@@ -66,6 +112,7 @@ def register_value(item, registers):
             'Identificação de um registrador deve ser inteiro.']
         error_msg(item, messages)
 
+    # Um valor de inicialização de registrador deve ser inteiro
     try:
         reg_val = int(tokens[2])
     except ValueError:
@@ -74,15 +121,26 @@ def register_value(item, registers):
             'Valor inicializado em um registrador deve ser inteiro.']
         error_msg(item, messages)
 
+    '''
+    Os registradores devem ser definidos em ordem crescente e sequencial
+    iniciando em 1. Dessa forma, considerando que a lista de registradores
+    começa como [0,] temos que a identificação de um novo registro é
+    precisamente o tamanho da lista antes de sua inclusão.
+    '''
     if reg_id!= len(registers):
         messages = [
             'Erro na definição de registradores.',
             'Ordem incorreta dos identificadores.']
         error_msg(item, messages)
 
+    # Se nenhum problema for encontrado o valor de inicialização é retornado.
     return reg_val
 
 def analise_module_calling(item, registers):
+    '''
+    Função para analisar um comando de chamada de módulo.
+    
+    '''
     line = item.line
     arguments = line.split('(')[1].split(')')[0]
     if not arguments:
@@ -249,5 +307,5 @@ def run_program(registers, commands):
 
 debugging_mode = False
 traceback_list = []
-program_name = 'examples/importando_modulo.lmp'
+program_name = 'examples/somar.lmp'
 execute(program_name)
