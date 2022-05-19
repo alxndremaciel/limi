@@ -136,7 +136,7 @@ def register_value(item, registers):
     # Se nenhum problema for encontrado o valor de inicialização é retornado.
     return reg_val
 
-def analise_module_calling(item, registers):
+def analyse_module_calling(item, registers):
     '''
     Função para analisar um comando de chamada de módulo.
     
@@ -242,7 +242,7 @@ def program_scanning(program, args_val):
             registers.append(val)
 
         if tokens[0] == '.':
-            analise_module_calling(item, registers)
+            analyse_module_calling(item, registers)
             commands.append(Command(item))
 
         if len(tokens[0]) == 1 and tokens[0] in '+-PCEF':
