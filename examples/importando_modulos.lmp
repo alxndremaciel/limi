@@ -1,0 +1,10 @@
+R 1 23
+R 2 19
+
+E 1
+E 2
+. somar_restrito(1,2)
+E 1
+E 2
+
+F _

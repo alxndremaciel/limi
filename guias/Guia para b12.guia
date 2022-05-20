@@ -1,0 +1,4 @@
+Inicializar traceback_list vazia no entrypoint
+Criar variavel de objeto da classe Command self.trace = item
+Atualizar traceback_list antes e depois de chamar modulos em run_program()
+Implementar print do traceback em error_msg()
