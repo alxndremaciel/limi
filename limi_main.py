@@ -269,7 +269,7 @@ def execute(program_name, args_val = []):
         return registers[1:args_len+1]
     else:
         # Aqui eh o caso de execucao do programa principal
-        return None
+        return registers
 
 def generate_program(program_name):
     '''
@@ -424,11 +424,36 @@ def run_program(registers, commands):
 # Define modo de depuracao
 debugging_mode = False
 
-# Inicializa lista de traceback
-traceback_list = []
+# Define modo de testes
+testing_mode = True
 
-# Caminho para o programa principal a ser executado
-program_name = 'examples/somar.lmp'
+if testing_mode:
+    with open('testing.list', 'r') as testing_list:
+        for test in testing_list.readlines():
+            test_file  = test.split('->')[0].strip()
+            test_result = test.split('->')[1].strip()
+            traceback_list = []
+            program_name = f'tests/{test_file}.lmp'
+            registers = execute(program_name)
+            result = '['
+            for reg_id, reg_val in enumerate(registers):
+                result += f'{reg_id}:{reg_val}, '
+            result += ']'
+            if result == test_result:
+                print(f'{test_file} - PASSED')
+            else:
+                print(f'{test_file} - NOT PASSED')
+                print(result)
+                break
+        else:
+            print('------ ALL TEST PASSED! ------')
 
-# Entrypoint para execucao do programa
-execute(program_name)
+else:
+    # Inicializa lista de traceback
+    traceback_list = []
+
+    # Caminho para o programa principal a ser executado
+    program_name = 'examples/somar.lmp'
+
+    # Entrypoint para execucao do programa
+    execute(program_name)
