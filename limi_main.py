@@ -364,9 +364,9 @@ def run_program(registers, commands):
     '''
 
     # Inicializa o contador do programa
+    CP = 0
 
     # Loop ate o comando F ser encontrado
-    CP = 0
     while True:
         if debugging_mode:
             run_debug_mode(registers, commands, CP)
