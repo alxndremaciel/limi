@@ -41,6 +41,8 @@ class Command:
         else:
             self.label = None
 
+        self.trace = item
+
     def __str__(self):
         if self.label is None:
             return f'{self.operation} {self.argument}'
@@ -116,12 +118,30 @@ def analyse_module_calling(item, registers):
 def run_debug_mode(registers, commands, CP):
     print(f'Depurando::: Registradores: {registers} --- Comando: {commands[CP]}')
 
+def verify_program_integrity(commands, registers, item):
+    if len(registers) == 1:
+        messages = [
+            'Erro de integridade do programa.',
+            f'Não foram definidos registradores']
+        error_msg(item, messages)
+    if commands[-1].operation != 'F':        
+        messages = [
+            'Erro de integridade do programa.',
+            f'O programa não termina com operação F.']
+        error_msg(item, messages)  
+        
 def error_msg(item, messages):
     line = item.line
     line_number = item.line_number
     program_name = item.program_name
     loc = f'{program_name}: {line_number}'
     print(50*'-')
+    for traceback in traceback_list:
+        tb_line = traceback.line
+        tb_line_number = traceback.line_number
+        tb_program_name = traceback.program_name
+        tb_loc = f'{tb_program_name}: {tb_line_number}'
+        print(f'<<< ERRO - [Traceback] - {tb_loc} >>> {tb_line}')        
     print(f'<<< ERRO - {loc} >>> {line}')
     for message in messages:
         print(f'<<< ERRO - {loc} >>> {message}')
@@ -144,7 +164,6 @@ def generate_program(program_name):
         for ln, line in enumerate(program_content.readlines()):
             cleaned_line = line.strip().strip('\n')
             item = Line(program_name, ln + 1, cleaned_line)
-            print(item)
             if cleaned_line:
                 program.append(item)
     return program
@@ -170,6 +189,8 @@ def program_scanning(program, args_val):
 
         if len(tokens[0]) == 1 and tokens[0] in '.+-PCEF':
             commands.append(Command(item))
+
+    verify_program_integrity(commands, registers, item)
 
     return registers, commands
 
@@ -219,11 +240,14 @@ def run_program(registers, commands):
             print(f'Registrador {arg}: {registers[arg]}')
             CP += 1
         elif ope == '.':
+            traceback_list.append(command.trace)
             registers = run_module(arg, registers)
+            traceback_list.pop()
             CP += 1
 
     return registers
 
 debugging_mode = False
+traceback_list = []
 program_name = 'examples/importando_modulos.lmp'
 execute(program_name)
