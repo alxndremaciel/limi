@@ -270,7 +270,7 @@ def execute(program_name, args_val = []):
         return registers[1:args_len+1]
     else:
         # Aqui eh o caso de execucao do programa principal
-        return None
+        return registers
 
 def generate_program(program_name):
     '''
@@ -422,11 +422,38 @@ def run_program(registers, commands):
 # Define modo de depuracao
 debugging_mode = False
 
-# Inicializa lista de traceback
-traceback_list = []
+# Define modod de testes
+testing_mode = True
 
-# Caminho para o programa principal a ser executado
-program_name = 'examples/importando_modulos.lmp'
+if testing_mode:
+    # Executa no modo de testes
+    with open('testing.list', 'r') as testing_list:
+        # Ler cada linha do arquivo testing.list
+        for test in testing_list.readlines():
+            # Identifica o arquivo a ser testado e o resultado esperado
+            test_file = test.split('->')[0].strip()
+            test_result = test.split('->')[1].strip()
 
-# Entrypoint para execucao do programa
-execute(program_name)
+            # Prepara a execução do arquivo a ser testado
+            traceback_list = []
+            program_name = f'tests/{test_file}.lmp'
+            registers = execute(program_name)
+
+            # Compara resultado de execução com o resultado esperado
+            if str(registers) == test_result:
+                print(f'{test_file} - PASSED!')
+            else:
+                print(f'{test_file} - NOT PASSED!')
+                print(registers)
+                break
+        else:
+            print('------ ALL TESTS PASSED -------')
+else:
+    # Inicializa lista de traceback
+    traceback_list = []
+
+    # Caminho para o programa principal a ser executado
+    program_name = 'examples/importando_modulos.lmp'
+
+    # Entrypoint para execucao do programa
+    execute(program_name)
