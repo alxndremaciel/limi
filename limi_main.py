@@ -262,15 +262,7 @@ def execute(program_name, args_val = []):
     # Executando o programa e obtendo os registradores ao final
     registers = run_program(registers, commands)
 
-    # Para modulo eh necessario retornar uma versao reduzida dos registradores.
-    if args_len:
-        # Nao inclui o registrador ZERO
-        # Nao inclui os registradores criados durante a execucao do modulo
-        # Somente os registradores passados como argumentos sao retornados
-        return registers[1:args_len+1]
-    else:
-        # Aqui eh o caso de execucao do programa principal
-        return registers
+    return registers
 
 def generate_program(program_name):
     '''
@@ -351,6 +343,9 @@ def run_module(module, registers):
 
     # Executa modulo de forma recursiva recebendo os novos valores de registradores
     new_reg = execute(module_path_name, args_val)
+
+    # Criando lista de registradores para atualizar
+    args = ['0'] + args
 
     # Substitui os valores antigos nos registradores por novos calculados
     for arg, reg in zip(args, new_reg):
@@ -453,7 +448,7 @@ else:
     traceback_list = []
 
     # Caminho para o programa principal a ser executado
-    program_name = 'examples/importando_modulos.lmp'
+    program_name = 'examples/sandbox.lmp'
 
     # Entrypoint para execucao do programa
     execute(program_name)

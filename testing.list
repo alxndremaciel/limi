@@ -1,1 +1,4 @@
 somar_restrito -> [0, 42, 0]
+eh_positivo_1 -> [1, 7]
+eh_positivo_2 -> [0, 0]
+eh_positivo_3 -> [0, -4]
