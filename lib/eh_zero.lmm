@@ -1,4 +1,4 @@
-R 1 0
+R 1 _
 
 . eh_positivo(1)
 C 0
@@ -12,6 +12,4 @@ P B
 P C
 
 - 0 A
-E 0 C
-E 1
-F _
+F _ C
