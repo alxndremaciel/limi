@@ -1,0 +1,9 @@
+R 1 78
+R 2 0
+R 3 -93
+
+. negar(1)
+. negar(2)
+. negar(3)
+
+F _
