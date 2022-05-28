@@ -1,0 +1,13 @@
+R 1 5
+R 2 3
+R 3 0
+R 4 -3
+R 5 0
+
+. eh_maior(1,2)
+. copiar(0,3)
+. eh_maior(4,2)
+. copiar(0,5)
+. eh_maior(5,4)
+
+F _
