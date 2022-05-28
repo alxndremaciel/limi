@@ -1,0 +1,11 @@
+R 1 _
+R 2 _
+R 3 0
+
+. negar(2)
+. somar(1,2)
+. copiar(0,3)
+. negar(2)
+. copiar(3,0)
+
+F _
