@@ -432,6 +432,7 @@ if testing_mode:
             # Prepara a execução do arquivo a ser testado
             traceback_list = []
             program_name = f'tests/{test_file}.lmp'
+            # BUG: Arquivos não encontrados devem ser tratados aqui mesmo
             registers = execute(program_name)
 
             # Compara resultado de execução com o resultado esperado
